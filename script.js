@@ -1,5 +1,6 @@
 let date = new Date();
 let miniDate = new Date();
+let miniminiDate = new Date();
 const months = [
   "January",
   "February",
@@ -129,6 +130,7 @@ const renderCalendar = () => {
 
   miniDate.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
   renderMiniCalendar();
+  renderMiniMiniCalendar();
 
 }
 
@@ -137,6 +139,30 @@ const renderMiniCalendar = () => {
   document.querySelector(".curr-date").innerHTML = months[miniDate.getMonth()] + " " + miniDate.getFullYear();
 
   let [dates, days, extraDays] = getDates(miniDate);
+  if (days.length/7 !== 6) {
+    days = days.concat(extraDays);
+  };
+
+  let daysElement =  `
+      <div class="weekdays">S</div>
+      <div class="weekdays">M</div>
+      <div class="weekdays">T</div>
+      <div class="weekdays">W</div>
+      <div class="weekdays">T</div>
+      <div class="weekdays">F</div>
+      <div class="weekdays">S</div>
+  `;
+  for (let i = 0; i < days.length; i++) {
+    daysElement += days[i];
+  }
+  monthDays.innerHTML = daysElement;
+}
+
+const renderMiniMiniCalendar = () => {
+  const monthDays = document.querySelector(".minimini-calendar");
+  document.querySelector(".currr-date").innerHTML = months[miniminiDate.getMonth()] + " " + miniminiDate.getFullYear();
+
+  let [dates, days, extraDays] = getDates(miniminiDate);
   if (days.length/7 !== 6) {
     days = days.concat(extraDays);
   };
@@ -176,6 +202,17 @@ document.querySelector(".mini-right").addEventListener("click", () => {
   renderMiniCalendar();
 });
 
+
+document.querySelector(".minimini-left").addEventListener("click", () => {
+  miniminiDate.setMonth(miniminiDate.getMonth() - 1);
+  renderMiniMiniCalendar();
+});
+
+document.querySelector(".minimini-right").addEventListener("click", () => {
+  miniminiDate.setMonth(miniminiDate.getMonth() + 1);
+  renderMiniMiniCalendar();
+});
+
 document.querySelector(".today-button").addEventListener("click", () => {
   const currDate = new Date();
   date.setFullYear(currDate.getFullYear(), currDate.getMonth(), currDate.getDate());
@@ -199,6 +236,39 @@ let dateBoxValue = "";
 
 function openTaskWindow(date) {
   const taskWindow = document.querySelector(".task-window");
+  const width = 30, height = 60;
+  taskWindow.style.width = width+"vw";
+  taskWindow.style.height = height+"vh";
+
+  const dateIndex = dates.findIndex((element) => { 
+    // console.log(`'${element}'`, `'${date}'`, element==date);
+    return element == date; 
+  });
+
+  const [row, col] = [Math.trunc(dateIndex/7), dateIndex%7];
+  let leftVal = 18 + 82/7*(col+1);
+  let topVal = 10 + 90/10;
+  
+  if (leftVal+width < 100) { 
+    taskWindow.style.left = leftVal + "vw"; 
+  }
+  else {
+    taskWindow.style.left = 100-(82/7*(7-col))-width + "vw";
+  }
+  taskWindow.style.top = topVal + "vh";
+
+  if (taskWindow.style.display === "none") {
+    taskWindow.style.display = "flex";
+  }
+  else {
+    taskWindow.style.display = "none";
+  }
+  dateBoxValue = date;
+}
+
+
+function openminiminicalendar(date) {
+  const taskWindow = document.querySelector(".showminiminicalendar");
   const width = 30, height = 60;
   taskWindow.style.width = width+"vw";
   taskWindow.style.height = height+"vh";
